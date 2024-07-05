@@ -39,7 +39,3 @@ class StudentClass implements StudentClassInterface {
     return this.firstName;
   }
 }
-
-const student = new StudentClass("John", "Doe");
-console.log(student.workOnHomework());
-console.log(student.displayName());
