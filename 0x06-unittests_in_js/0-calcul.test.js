@@ -17,4 +17,8 @@ describe('calculateNumber', function () {
   it('should return 6 when adding 1.5 and 3.7', function () {
     assert.strictEqual(calculateNumber(1.5, 3.7), 6);
   });
+
+  it('should return 4 when rounding both numbers (1 and 3.4)', function () {
+    assert.strictEqual(calculateNumber(1, 3.4), 4);
+  });
 });
