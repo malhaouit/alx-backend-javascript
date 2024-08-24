@@ -29,12 +29,12 @@ const app = http.createServer(async (req, res) => {
         fieldCounts[field].names.push(firstname);
       });
 
-      res.write(`Number of students: ${numberOfStudents}\n`);
+      res.write(`Number of students: ${numberOfStudents}`);
       for (const [field, info] of Object.entries(fieldCounts)) {
-        res.write(`Number of students in ${field}: ${info.count}. List: ${info.names.join(', ')}\n`);
+        res.write(`\nNumber of students in ${field}: ${info.count}. List: ${info.names.join(', ')}`);
       }
     } catch (err) {
-      res.write('Cannot load the database\n');
+      res.write('\nCannot load the database');
     }
 
     res.end();
