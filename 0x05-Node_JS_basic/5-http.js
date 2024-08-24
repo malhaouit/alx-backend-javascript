@@ -34,7 +34,7 @@ const app = http.createServer(async (req, res) => {
         res.write(`\nNumber of students in ${field}: ${info.count}. List: ${info.names.join(', ')}`);
       }
     } catch (err) {
-      res.write('\nCannot load the database');
+      res.write('Cannot load the database');
     }
 
     res.end();
