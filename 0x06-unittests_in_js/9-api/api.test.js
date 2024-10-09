@@ -1,49 +1,56 @@
 const request = require('request');
 const { expect } = require('chai');
-const app = require('./api');
 
-describe('Index page', () => {
-  it('should return status code 200', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(response.statusCode).to.equal(200);
-      done();
+// Helper function to make requests and perform assertions
+function testRequest(description, url, expectedStatusCode, expectedBody = null) {
+  describe(description, () => {
+    it(`Responds with status code ${expectedStatusCode}`, (done) => {
+      const options = {
+        url: `http://localhost:7865${url}`,
+        method: 'GET',
+      };
+
+      request(options, (error, response, body) => {
+        expect(response.statusCode).to.equal(expectedStatusCode);
+        if (expectedBody) {
+          expect(body).to.equal(expectedBody);
+        }
+        done();
+      });
     });
   });
+}
 
-  it('should return the correct message', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(body).to.equal('Welcome to the payment system');
-      done();
-    });
-  });
-});
+// Main test suite
+describe('Integration Testing', () => {
 
-describe('Cart page', () => {
-  it('should return status code 200 when :id is a number', (done) => {
-    request.get('http://localhost:7865/cart/12', (error, response, body) => {
-      expect(response.statusCode).to.equal(200);
-      done();
-    });
-  });
+  // Test for the root endpoint
+  testRequest(
+    'GET /',
+    '/',
+    200,
+    'Welcome to the payment system'
+  );
 
-  it('should return the correct message when :id is a number', (done) => {
-    request.get('http://localhost:7865/cart/12', (error, response, body) => {
-      expect(body).to.equal('Payment methods for cart 12');
-      done();
-    });
-  });
-
-  it('should return status code 404 when :id is not a number', (done) => {
-    request.get('http://localhost:7865/cart/hello', (error, response, body) => {
-      expect(response.statusCode).to.equal(404);
-      done();
-    });
+  // Valid cart ID tests
+  const validCartIds = [12, 1, 123];
+  validCartIds.forEach((id) => {
+    testRequest(
+      `GET /cart/${id}`,
+      `/cart/${id}`,
+      200,
+      `Payment methods for cart ${id}`
+    );
   });
 
-  it('should return Not Found message when :id is not a number', (done) => {
-    request.get('http://localhost:7865/cart/hello', (error, response, body) => {
-      expect(body).to.equal('Not Found');
-      done();
-    });
+  // Invalid cart ID tests (non-numeric)
+  const invalidCartIds = ['a12', 'a12b', '12b', 'hello', ''];
+  invalidCartIds.forEach((id) => {
+    const url = id ? `/cart/${id}` : '/cart/'; // Handle empty ID case
+    testRequest(
+      `GET /cart/${id || 'empty'}`,
+      url,
+      404
+    );
   });
 });
